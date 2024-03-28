@@ -49,10 +49,16 @@ async function registerUser (req, res) {
             username : req.body["username"]
         }, req.body["password"])
 
-        res.json(token);
+        res.json({
+            stat : `pass`,
+            msg : token
+        });
 
     } catch (error) {
-        res.json(error.message);
+        res.send({
+            stat : `fail`,
+            msg : error.message
+        });
     }
     mongoose.connection.close();
 }
