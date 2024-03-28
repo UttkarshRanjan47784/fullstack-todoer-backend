@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import mongoose from 'mongoose'
+import mongoose, { mongo } from 'mongoose'
 import env from "dotenv"
 
 env.config();
@@ -13,31 +13,35 @@ const userSchema = new mongoose.Schema({
 
 const userModel = mongoose.model(`todoer-users`, userSchema);
 
-async function checkUser (name) {
-    try{
+async function loginUser (req, res) {
+    try {
+        await mongoose.connect(url);
         let temp = await userModel.findOne({
-            username : name
-        })
-        if (temp != null || temp != undefined){
-            console.log(`lol`)
-            return true;
-        }
-        return false;
-    } catch (error){
-        console.log(error)
+            username : req.body["username"]
+        });
+        if (temp == null || temp == undefined)
+            throw new Error(`User does not exist!`);
+        if (req.body['password'] == temp.password)
+            res.json(true);
+        else
+            throw new Error(`Invalid Password`);
+    } catch (error) {
+        res.json(error.message)
     }
-    
+    mongoose.connection.close();
 }
 
 async function registerUser (req, res) {
     try {
         await mongoose.connect(url);
         let user = new userModel(req.body);
+        
+        let temp = await userModel.findOne({
+            username : req.body["username"]
+        });
 
-        if (await checkUser(req.body["username"])){
-            console.log(`F`);
-            throw new Error(`ERROR : username already taken`);
-        }            
+        if (temp != null || temp != undefined)
+            throw new Error(`User already exists`);
 
         await user.save();
 
@@ -53,4 +57,4 @@ async function registerUser (req, res) {
     mongoose.connection.close();
 }
 
-export { registerUser }
+export { registerUser, loginUser }
