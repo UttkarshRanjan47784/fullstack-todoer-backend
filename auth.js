@@ -6,6 +6,8 @@ env.config();
 
 const url = process.env.MONGO_URL;
 
+let activeUsers = {}
+
 const userSchema = new mongoose.Schema({
     username : String,
     password : String
@@ -21,8 +23,16 @@ async function loginUser (req, res) {
         });
         if (temp == null || temp == undefined)
             throw new Error(`User does not exist!`);
-        if (req.body['password'] == temp.password)
-            res.json(true);
+        if (req.body['password'] == temp.password){
+            let token =  jwt.sign({
+                username : req.body["username"]
+            }, req.body["password"])
+            console.log(`token generated`)
+            res.json({
+                msg : true,
+                token : token
+            });
+        }
         else
             throw new Error(`Invalid Password`);
     } catch (error) {
