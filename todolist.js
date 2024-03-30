@@ -46,4 +46,21 @@ async function addTodoList(req, res) {
     await mongoose.connection.close()
 }
 
-export { getAllTodoLists, addTodoList }
+async function deleteTodoList(req, res) {
+    try {
+        await mongoose.connect(url);
+        let token = req.headers["authorization"]
+        let username = jwt.decode(token)["username"];
+        const collectionString = `todoer-${username}-todoLists`;
+        const todoListCollection = new mongoose.model(collectionString, todoListListSchema);
+        let newListName = await todoListCollection.findOneAndDelete({
+            todoListName: req.body.todoListName
+        })
+        res.json(newListName);
+    } catch (error) {
+        res.json(`operation addToTodoList failed : ${error.message}`)
+    }
+    await mongoose.connection.close()
+}
+
+export { getAllTodoLists, addTodoList, deleteTodoList }
