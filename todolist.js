@@ -6,7 +6,11 @@ env.config()
 const url = process.env.MONGO_URL;
 
 const todoListListSchema = new mongoose.Schema({
-    todoListName : String
+    todoListName : String,
+    taskList : [{
+        taskName : String,
+        taskStatus : Boolean
+    }]
 });
 
 const userColl = new mongoose.model(`todoer-users`);
