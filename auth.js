@@ -6,8 +6,6 @@ env.config();
 
 const url = process.env.MONGO_URL;
 
-let activeUsers = {}
-
 const userSchema = new mongoose.Schema({
     username : String,
     password : String

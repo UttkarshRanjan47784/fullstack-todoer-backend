@@ -5,6 +5,7 @@ import env from "dotenv"
 import { registerUser, loginUser } from "./auth.js"
 import { verifyUser } from "./home.js"
 import { getWeather } from "./weather.js"
+import { getAllTodoLists, addTodoList } from "./todolist.js"
 
 env.config();
 
@@ -18,6 +19,9 @@ app.post('/login', loginUser)
 
 app.get(`/home`, verifyUser)
 app.get(`/weather`, getWeather);
+
+app.get(`/todolists`, getAllTodoLists);
+app.post(`/addtodolist`, addTodoList);
 
 app.listen(process.env.PORT, ()=>{
     console.log(`server running on port ${process.env.PORT}`)
