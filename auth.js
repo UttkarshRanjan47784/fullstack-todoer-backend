@@ -5,6 +5,7 @@ import env from "dotenv"
 env.config();
 
 const url = process.env.MONGO_URL;
+const secret = process.env.SERVER_SECRET;
 
 const userSchema = new mongoose.Schema({
     username : String,
@@ -24,7 +25,7 @@ async function loginUser (req, res) {
         if (req.body['password'] == temp.password){
             let token =  jwt.sign({
                 username : req.body["username"]
-            }, req.body["password"])
+            }, secret)
             console.log(`token generated`)
             res.json({
                 msg : true,
@@ -55,7 +56,7 @@ async function registerUser (req, res) {
 
         let token = jwt.sign({
             username : req.body["username"]
-        }, req.body["password"])
+        }, secret)
 
         res.json({
             stat : `pass`,

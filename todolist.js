@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken'
-import mongoose, { Mongoose } from 'mongoose';
+import mongoose from 'mongoose';
 import env from "dotenv"
 
 env.config()
 const url = process.env.MONGO_URL;
+const secret = process.env.SERVER_SECRET;
 
 const todoListListSchema = new mongoose.Schema({
     todoListName : String,
@@ -19,12 +20,9 @@ async function getAllTodoLists (req, res){
     try {
         await mongoose.connect(url);
         let token = req.headers["authorization"]
+        jwt.verify(token, secret);
         let username = jwt.decode(token)["username"];
-        let user = await userColl.findOne({
-            username : username
-        });
-        jwt.verify(token, user.password);
-        const collectionString = `todoer-${user.username}-todoLists`;
+        const collectionString = `todoer-${username}-todoLists`;
         const todoListCollection = new mongoose.model(collectionString, todoListListSchema);
         let response = await todoListCollection.find();
         res.json(response)

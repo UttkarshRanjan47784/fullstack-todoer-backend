@@ -6,7 +6,7 @@ import { registerUser, loginUser } from "./auth.js"
 import { verifyUser } from "./home.js"
 import { getWeather } from "./weather.js"
 import { getAllTodoLists, addTodoList, deleteTodoList } from "./todolist.js"
-import { getAllTask } from "./todoitems.js"
+import { addTask, updateTask, deleteTask } from "./todoitems.js"
 
 env.config();
 
@@ -25,7 +25,9 @@ app.get(`/todolists`, getAllTodoLists);
 app.post(`/addtodolist`, addTodoList);
 app.post(`/deletetodolist`, deleteTodoList);
 
-app.post(`/gettasks`, getAllTask);
+app.post(`/addtask`, addTask);
+app.post(`/updatetask`, updateTask);
+app.post(`/deletetask`, deleteTask);
 
 app.listen(process.env.PORT, ()=>{
     console.log(`server running on port ${process.env.PORT}`)

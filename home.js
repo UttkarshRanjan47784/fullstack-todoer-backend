@@ -1,24 +1,18 @@
 import jwt from 'jsonwebtoken'
-import mongoose from 'mongoose';
 import env from "dotenv"
 
 env.config()
 
-const url = process.env.MONGO_URL;
-const userModel = mongoose.model(`todoer-users`);
+const secret = process.env.SERVER_SECRET;
 
 async function verifyUser (req, res) {
     try {
-        await mongoose.connect(url)
         let token = req.headers["authorization"]
-        let username = jwt.decode(token)["username"];
-        let user = await userModel.findOne({
-            username : username
-        });
-        jwt.verify(token, user.password);
+        let user = jwt.decode(token)["username"]
+        jwt.verify(token, secret);
         res.json({
             stat : true,
-            msg : `${user.username}`
+            msg : `${user}`
         })
     } catch (error) {
         res.json({
@@ -26,7 +20,6 @@ async function verifyUser (req, res) {
             msg : `Unauthorized User : ${error.message}`
         })
     }
-    await mongoose.connection.close()
 }
 
 export { verifyUser }
