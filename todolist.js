@@ -26,7 +26,6 @@ async function getAllTodoLists (req, res){
         const todoListCollection = new mongoose.model(collectionString, todoListListSchema);
         let response = await todoListCollection.find();
         res.json(response)
-
     } catch (error) {
         res.json(`operation getAllTodoList failed : ${error.message}`)
     }
@@ -42,6 +41,7 @@ async function addTodoList(req, res) {
         const todoListCollection = new mongoose.model(collectionString, todoListListSchema);
         let newListName = new todoListCollection(req.body)
         await newListName.save()
+        res.json(`Sent`)
     } catch (error) {
         res.json(`operation addToTodoList failed : ${error.message}`)
     }

@@ -22,12 +22,15 @@ async function loginUser (req, res) {
         let temp = await userModel.findOne({
             username : req.body["username"]
         });
-        if (temp == null || temp == undefined)
+        if (temp == null || temp == undefined){
             res.json(`User does not exist!`);
+            return
+        }
 
         bcrypt.compare(req.body["password"], temp.password, function(err, result) {
             if (err){
                  res.json(err.message)
+                 return
             }
             if (result) {
                 let token =  jwt.sign({
@@ -38,8 +41,10 @@ async function loginUser (req, res) {
                     token : token
                 });
             }
-            else 
+            else {
                 res.json(`Invalid Password`)
+                return
+            }
         });
     } catch (error) {
         res.json(error.message)
@@ -52,10 +57,11 @@ async function registerUser (req, res) {
         bcrypt.hash(req.body["password"], Number(salt), async (err, hash) => {
             if (err){
                 console.log(err.message)
-                res.send({
+                res.json({
                     stat : `fail`,
                     msg : err.message
                 });
+                return;
             }
             else {
                 await mongoose.connect(url);
@@ -63,7 +69,7 @@ async function registerUser (req, res) {
                     username : req.body["username"]
                 });
                 if (temp != null || temp != undefined){
-                    res.send({
+                    res.json({
                         stat : `fail`,
                         msg : `User already exists`
                     });
@@ -85,7 +91,8 @@ async function registerUser (req, res) {
             }        
         });
     } catch (error) {
-        res.send({
+        console.log(`Caught`)
+        res.json({
             stat : `fail`,
             msg : error.message
         });
